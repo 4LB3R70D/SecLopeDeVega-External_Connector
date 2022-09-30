@@ -1,0 +1,13 @@
+SEC LOPE DE VEGA project is provided under the MPL-2 License (please check LICENSE.txt)
+
+SEC LOPE DE VEGA project uses the following libraries with the corresponding licenses. 
+These dependencies have not been modified in any way for this project, and they have been used as they are provided:
+
+ + EXTERNAL CONNECTOR DEPENDENCIES:
+   - github.com/pyca/cryptography => BSD-3-Clause license => https://github.com/pyca/cryptography/blob/main/LICENSE.BSD
+   - github.com/zeromq/pyzmq => BSD-3-Clause license => https://github.com/zeromq/pyzmq/blob/main/COPYING.BSD
+   - github.com/mcfreis/pydtls => Apache-2 license => https://github.com/mcfreis/pydtls/blob/master/LICENSE
+   - github.com/redis/redis-py => MIT license => https://github.com/redis/redis-py/blob/master/LICENSE
+
+
+
