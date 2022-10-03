@@ -25,19 +25,21 @@ Additionally, **TLS** and **DTLS** are supported to some extent, so you may defi
 This capability of defining your own interaction in the application protocol you wish (if possible) is the main reason for the name of this project. 
 [Lope de Vega](https://en.wikipedia.org/wiki/Lope_de_Vega) was a famous Spanish writer in the Spanish Golden Age, who was quite prolific in his work. 
 Therefore, this software enables you to create many 'interactions', potentially making you as 'prolific' as possible thanks to the customization capabilities of this software. 
-The term 'Sec' is a kind of play on words using the idea of '[Sir](https://en.wikipedia.org/wiki/Sir)' (he was indeed a knight of the Order of Malta), 
+The term 'Sec' is a kind of play on words using the idea of '[Sir](https://en.wikipedia.org/wiki/Sir)' (he was indeed a knight of the Order of Malta),
 and focusing on the potential use of this software for security reasons:
 
 - In client mode, *Lope* can do some security tests when *he* connects to other systems in an interactive approach 
-  (not sure if we can call this [IAST](https://owasp.org/www-project-devsecops-guideline/latest/02c-Interactive-Application-Security-Testing)). 
-  Since you can define how many client connections to establish, it might be useful to try to do some [DDoS](https://en.wikipedia.org/wiki/Denial-of-service_attack) testing.
+  (not sure if we can call this [IAST](https://owasp.org/www-project-devsecops-guideline/latest/02c-Interactive-Application-Security-Testing)), and potentially some web 
+  [crawling/scraping](https://www.datacentric.es/en/web-crawling-and-web-scraping/) activities. Since you can define how many client connections to establish, it might be 
+  useful to try to do some [DDoS](https://en.wikipedia.org/wiki/Denial-of-service_attack) testing.
 
-- In server mode, *Lope* can work as a kind of [honeypot](https://en.wikipedia.org/wiki/Honeypot_(computing)) (or a set of them, this is explained in other sections). 
-- It also can work to do some dynamic testing on client software via the answers provided from the server.
+- In server mode, *Lope* can work as a kind of [honeypot](https://en.wikipedia.org/wiki/Honeypot_(computing)) (or a set of them, this is explained in other sections).
+  It also can work to do some dynamic testing on client software via the answers provided from the server.
 
 However, this software may be useful for other kind of tests that are not only security related, such as mocking-up other systems (as a client or as a server), 
 potentially emulating user activity, as well as for doing load and stress testing too. **In any case, just remember that this software requires you to define the interaction, 
-so it is not 'plug and play': there is still work to do to cover your needs** (except you have the right interaction files - *conversation rules* files)
+so it is not 'plug and play': there is still work to do to cover your needs** (except you have the right interaction files - *conversation rules* files).You can think of this like
+a gun and its bullets: *Lope* is the 'gun', but the *conversation rules* are the 'bullets'. 
 
 Regarding rules, there are three main types of **conversation rules** that *Lope* can execute:
 
