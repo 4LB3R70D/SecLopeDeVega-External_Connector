@@ -274,6 +274,8 @@ class OperationWorker:
                     conn_mem,
                     connection_copy.ip,
                     connection_copy.port,
+                    connection_copy.session_key,
+                    connection_copy.session_value,
                     self.custom_functions_name)
 
         # Builtin memory operations
@@ -286,7 +288,9 @@ class OperationWorker:
                     global_mem,
                     conn_mem,
                     connection_copy.ip,
-                    connection_copy.port)
+                    connection_copy.port,
+                    connection_copy.session_key,
+                    connection_copy.session_value)
 
         self.do_memory_updates(memory_mod_multi, MULTI_EXT_CONNECTORS)
         self.do_memory_updates(memory_mod_global, GLOBAL_MEMORY)
@@ -417,6 +421,7 @@ class OperationWorker:
                 conv_mod.execute_custom_function_pre_post_processor(
                     raw_input_output, custom_function, multi_ext_conn_mem,
                     global_mem, conn_mem, connection_copy.ip, connection_copy.port,
+                    connection_copy.session_key, connection_copy.session_value, 
                     self.custom_functions_name)
 
             self.do_memory_updates(memory_mod_multi, MULTI_EXT_CONNECTORS)

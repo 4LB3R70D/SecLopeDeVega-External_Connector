@@ -57,8 +57,7 @@ ONE_RESULT_OF_CUSTOM_FUNCTION = 1
 # Custom functions especial parameters
 CUSTOM_FUNCTION_EXTERNAL_INPUT = "EXT_IN"
 CUSTOM_FUNCTION_PROCESSORS_INPUT_OUTPUT = "PROCESSOR_INPUT_OUTPUT"
-CUSTOM_FUNCTION_EXTERNAL_IP = IP_VALUE_PARAMETER
-CUSTOM_FUNCTION_EXTERNAL_PORT = PORT_VALUE_PARAMETER
+
 
 # Memory operation
 STRING_OPERATION = "STR"
@@ -436,7 +435,8 @@ def get_potential_memory_mods_using_captured_data(captured_data, multi_ext_conn_
             for memory_variable, capture in rule_capturing[CAPTURES].items():
 
                 # add it in the modification list
-                # memory_reference_variable = None (we are not using a memory variable as reference here)
+                # memory_reference_variable = None 
+                # # (we are not using a memory variable as reference here)
                 memory_mod_for_capturing_multi_ext_conn_mem, memory_mod_for_capturing_global,\
                     memory_mod_for_capturing_conn = prepare_mem_variable_to_be_modified(
                         memory_variable,
@@ -455,7 +455,8 @@ def get_potential_memory_mods_using_captured_data(captured_data, multi_ext_conn_
 
 def get_potential_memory_mods_using_rules(conv_rules, multi_ext_conn_mem, global_mem, conn_mem):
     '''
-    Function to prepare the list of potential modifications according to the conversation rules memory updates
+    Function to prepare the list of potential modifications according to the conversation 
+    rules memory updates
     '''
     # list (python dict) of potential modifications of memory variables.
     # In case there are several modifications applicable to
@@ -488,7 +489,7 @@ def get_potential_memory_mods_using_rules(conv_rules, multi_ext_conn_mem, global
 
 def prepare_memory_operation_parameters(mem_ops, external_input_output,
                                         multi_ext_conn_mem, global_mem,
-                                        conn_mem, ip, port):
+                                        conn_mem, ip, port, session_key, session_value):
     '''
     Function to prepare a list of parameters to be used for the custom function or 
     memory operation from the external input/output and the memory variables
@@ -498,10 +499,14 @@ def prepare_memory_operation_parameters(mem_ops, external_input_output,
         if (input.upper() == CUSTOM_FUNCTION_EXTERNAL_INPUT or
                 input.upper() == CUSTOM_FUNCTION_PROCESSORS_INPUT_OUTPUT):
             params.append(external_input_output)
-        elif input.upper() == CUSTOM_FUNCTION_EXTERNAL_IP:
+        elif input.upper() == IP_VALUE_PARAMETER:
             params.append(ip)
-        elif input.upper() == CUSTOM_FUNCTION_EXTERNAL_PORT:
+        elif input.upper() == PORT_VALUE_PARAMETER:
             params.append(port)
+        elif input.upper() == SESSION_KEY_PARAMETER:
+            params.append(session_key)
+        elif input.upper() == SESSION_VALUE_PARAMETER:
+            params.append(session_value)
         elif input in multi_ext_conn_mem:
             params.append(multi_ext_conn_mem[input])
         elif input in global_mem:
@@ -613,7 +618,8 @@ def check_and_import_custom_function(function_name, custom_functions_name):
 
 
 def execute_custom_function_pre_post_processor(raw_input_output, custom_function_pre_post_processor, multi_ext_conn_mem,
-                                               global_mem, conn_mem, ip, port, custom_functions_name):
+                                               global_mem, conn_mem, ip, port, session_key, session_value, 
+                                               custom_functions_name):
     '''
     Function to execute the custom function preprocessor
     '''
@@ -633,7 +639,8 @@ def execute_custom_function_pre_post_processor(raw_input_output, custom_function
 
     memory_mod_for_functions_multi_ext_conn_mem, memory_mod_for_functions_global, memory_mod_for_functions_conn, \
         results = custom_function_execution(custom_function_pre_post_processor, raw_input_output, multi_ext_conn_mem,
-                                            global_mem, conn_mem, ip, port, custom_functions_name)
+                                            global_mem, conn_mem, ip, port, session_key, session_value, 
+                                            custom_functions_name)
 
     # the first element has to be the processed input/output
     if results is not None:
@@ -646,7 +653,7 @@ def execute_custom_function_pre_post_processor(raw_input_output, custom_function
 
 
 def memory_operation_execution(biltin_mem_op, external_input_output, multi_ext_conn_mem,
-                               global_mem, conn_mem, ip, port):
+                               global_mem, conn_mem, ip, port, session_key, session_value):
     '''
     Function to execute a builtin memory operation declared in a rule, returning the changes in
     terms of memory variables
@@ -659,7 +666,7 @@ def memory_operation_execution(biltin_mem_op, external_input_output, multi_ext_c
     params = prepare_memory_operation_parameters(
         biltin_mem_op, external_input_output,
         multi_ext_conn_mem, global_mem, conn_mem,
-        ip, port)
+        ip, port, session_key, session_value)
     output = do_memory_operation(operation, params)
     if len(output) > 0:
         memory_mod_for_functions_multi_ext_conn_mem, memory_mod_for_functions_global,\
@@ -671,7 +678,8 @@ def memory_operation_execution(biltin_mem_op, external_input_output, multi_ext_c
 
 
 def custom_function_execution(custom_function, external_input_output, multi_ext_conn_mem,
-                              global_mem, conn_mem, ip, port, custom_functions_name):
+                              global_mem, conn_mem, ip, port, session_key, session_value,
+                              custom_functions_name):
     '''
     Function to execute a custom function declared in a rule, returning the changes in
     terms of memory variables
@@ -687,7 +695,7 @@ def custom_function_execution(custom_function, external_input_output, multi_ext_
         # https://stackoverflow.com/questions/11781265/python-using-getattr-to-call-function-with-variable-parameters
         try:
             params = prepare_memory_operation_parameters(custom_function, external_input_output, multi_ext_conn_mem,
-                                                         global_mem, conn_mem, ip, port)
+                                                         global_mem, conn_mem, ip, port, session_key, session_value)
             results = getattr(slv_custom_functions_mod,
                               custom_function.Name)(*params)
             memory_mod_for_functions_multi_ext_conn_mem, memory_mod_for_functions_global,\
@@ -706,7 +714,8 @@ def custom_function_execution(custom_function, external_input_output, multi_ext_
 
 
 def get_potential_memory_mods_using_bultin_mem_ops(conv_rules, external_input, multi_ext_conn_mem,
-                                                   global_mem, conn_mem, ip, port):
+                                                   global_mem, conn_mem, ip, port, session_key, 
+                                                   session_value):
     '''
     Function to get memory modifications as results of the execution of bultin memory operations
     Builtin memory operation information within the rule   
@@ -731,14 +740,15 @@ def get_potential_memory_mods_using_bultin_mem_ops(conv_rules, external_input, m
                 memory_mod_for_functions_multi, memory_mod_for_functions_global,\
                     memory_mod_for_functions_conn = memory_operation_execution(
                         rule.BuiltInMemOps, external_input, multi_ext_conn_mem,
-                        global_mem, conn_mem, ip, port)
+                        global_mem, conn_mem, ip, port, session_key, session_value)
 
     return (memory_mod_for_functions_multi, memory_mod_for_functions_global,
             memory_mod_for_functions_conn)
 
 
 def get_potential_memory_mods_using_custom_functions(conv_rules, external_input, multi_ext_conn_mem,
-                                                     global_mem, conn_mem, ip, port, custom_functions_name):
+                                                     global_mem, conn_mem, ip, port, session_key, 
+                                                     session_value, custom_functions_name):
     '''
     Function to get memory modifications as results of the execution of custom functions
     Expected custom function information within the rule   
@@ -763,7 +773,8 @@ def get_potential_memory_mods_using_custom_functions(conv_rules, external_input,
                 memory_mod_for_functions_multi, memory_mod_for_functions_global,\
                     memory_mod_for_functions_conn, _ = custom_function_execution(
                         rule.CustomFunction, external_input, multi_ext_conn_mem,
-                        global_mem, conn_mem, ip, port, custom_functions_name)
+                        global_mem, conn_mem, ip, port, session_key, session_value,
+                        custom_functions_name)
 
     return memory_mod_for_functions_multi, memory_mod_for_functions_global, memory_mod_for_functions_conn
 
