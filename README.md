@@ -64,4 +64,5 @@ and the documentation sphinx project can be found in this [repository](https://g
 
 Note
 -----
-   Please, consider this project as **somewhere in between an alpha and beta version** since some capabilities (mainly the integration with other systems for sending alerts, as well as the support of TLS) have not been fully tested.
+   Please, consider this project as **somewhere in between an alpha and beta version** since some capabilities (mainly the integration with other systems for sending alerts, 
+   as well as the support of TLS) have not been fully tested.
