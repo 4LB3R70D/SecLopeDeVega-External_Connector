@@ -44,7 +44,7 @@ def get_initial_async_delay(initial_delay_client_mode_async_thread, time_between
 def run_async_worker(exec_dashboard, connection_register, todo_list, cnv_rules, activity_register,
                      ext_conn_controller, time_between_async_loops, number_async_loops_to_clean_conn_register,
                      initial_delay_client_mode_async_thread, hash_conversation_rules_used, cleaning_register,
-                     custom_functions_name):
+                     custom_functions_name, number_rule_checker_subworkers):
     '''
     This function is the main one for operation for the main thread, controlling the execution
     of the external connector
@@ -104,7 +104,8 @@ def run_async_worker(exec_dashboard, connection_register, todo_list, cnv_rules, 
                 ext_conn_controller=ext_conn_controller,
                 hash_conversation_rules_used=hash_conversation_rules_used,
                 cleaning_register=cleaning_register,
-                custom_functions_name=custom_functions_name)
+                custom_functions_name=custom_functions_name,
+                number_rule_checker_subworkers=number_rule_checker_subworkers)
 
             new_thread = threading.Thread(
                 target=op_loops.async_loop,

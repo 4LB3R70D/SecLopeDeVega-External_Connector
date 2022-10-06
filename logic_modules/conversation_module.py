@@ -16,6 +16,7 @@ It receives the conversation rules from the engine during starting phase and use
 for external inputs
 """
 import base64
+import concurrent.futures
 import hashlib
 import importlib
 import json
@@ -891,7 +892,7 @@ def check_memory_conditions(memory_conditions, multi_ext_conn_mem, global_mem, c
 
 def is_group_applicable(group, multi_ext_conn_mem, global_mem, conn_mem):
     '''
-    Function to check if a given conversation grou is applicable or not, according to 
+    Function to check if a given conversation group is applicable or not, according to 
     the memory status (multi, global and connection level)
     '''
     applicable = check_memory_conditions(
@@ -924,30 +925,66 @@ def evaluate_rule_using_regex(rule, multi_ext_conn_mem, global_mem, conn_mem,
 
 def detect_applicable_rules_using_rules_regex(rules, first_hit_applicable, multi_ext_conn_mem,
                                               global_mem, conn_mem, recv_data, regex_conv_rules,
-                                              captured_data, first_hit):
+                                              captured_data, first_hit, number_rule_checker_subworkers):
     '''
     Function to get the list of conversation rules applicables using rules (no groups)
     '''
-    for rule in rules:
-        applicable, regex_conv_rules, captured_data = evaluate_rule_using_regex(
-            rule, multi_ext_conn_mem, global_mem, conn_mem,
-            recv_data, regex_conv_rules, captured_data)
-        # This will be executed in the first applicable rule, as well as in any loop.
-        # But if the first the condition is applicable no more loops will be executed => BREAK
-        if applicable and interlanguage_bool_check(first_hit_applicable):
-            logger.info(
-                f"Since the flag 'conversation_use_only_first_hit' is enabled, " +
-                "no more rules will be detected")
-            # We are in the scenario of only the first hit and the hit has already happened
-            first_hit = True
-            break
+    first_hit_applicable_scenario = interlanguage_bool_check(first_hit_applicable)
+    
+    # Not parallel rule checking to ensure first hit approach
+    if first_hit_applicable_scenario:
+        for rule in rules:
+            applicable, regex_conv_rules, captured_data = evaluate_rule_using_regex(
+                rule, multi_ext_conn_mem, global_mem, conn_mem,
+                recv_data, regex_conv_rules, captured_data)
+            
+            # This will be executed in the first applicable rule, as well as in any loop.
+            # But if the first the condition is applicable no more loops will be executed => BREAK
+            # are we in the scenario of only the first hit, and the hit has already happened?
+            first_hit = applicable and first_hit_applicable_scenario
+            if first_hit:
+                logger.info(
+                    f"Since the flag 'conversation_use_only_first_hit' is enabled, " +
+                    "no more rules will be detected")
+                break
+    else:   
+        # https://docs.python.org/3/library/concurrent.futures.html
+        with concurrent.futures.ThreadPoolExecutor(max_workers = number_rule_checker_subworkers) as executor:
+            future_results = [executor.submit(evaluate_rule_using_regex, rule, multi_ext_conn_mem, global_mem, 
+                                            conn_mem, recv_data, list(), list()) for rule in rules]
+            done = False
+            future_results_to_check = future_results
+        
+            while (not done):
+                # reset the list for the next iteration
+                next_iteration_future_results_to_check = list()
+                
+                for rule_result in future_results_to_check: 
+                    # is the result available, and still work to do?
+                    if rule_result.done():
+                        applicable, regex_conv_rules_for_rule, captured_data_for_rule = rule_result.result()
+                        if applicable:
+                            regex_conv_rules.extend(regex_conv_rules_for_rule)
+                            captured_data.extend(captured_data_for_rule)
+                    else:
+                        next_iteration_future_results_to_check.append(rule_result)     
+                
+                # Check if all rules have been already checked (no rules to check in the next iteration)
+                if len(next_iteration_future_results_to_check) == 0:
+                    done = True
+                else:
+                    future_results_to_check = next_iteration_future_results_to_check
+                
+            if done:
+                executor.shutdown()
+                            
 
     return regex_conv_rules, captured_data, first_hit
 
 
 def detect_applicable_rules_using_rules_groups(cnv_rules, multi_ext_conn_mem,
                                                global_mem, conn_mem, recv_data, regex_conv_rules,
-                                               captured_data, first_hit):
+                                               captured_data, first_hit, number_rule_checker_subworkers):
     '''
     Function to get the list of conversation rules applicables using rules that are part of a group
     '''
@@ -965,7 +1002,8 @@ def detect_applicable_rules_using_rules_groups(cnv_rules, multi_ext_conn_mem,
                 regex_match_group = re.search(rule_ptrn, recv_data)
 
             # Check if the group is applicable via Memory variables
-            if group is not None and len(group.Rules) > 0:
+            if (group is not None and len(group.Rules) > 0 and
+                group.MemConditions is not None and len(group.MemConditions) >0):
                 memory_conditions_group = is_group_applicable(
                     group, multi_ext_conn_mem, global_mem, conn_mem)
 
@@ -977,7 +1015,7 @@ def detect_applicable_rules_using_rules_groups(cnv_rules, multi_ext_conn_mem,
                 regex_conv_rules, captured_data, first_hit = detect_applicable_rules_using_rules_regex(
                     group.Rules, cnv_rules.ExtOperation.ConversationUseOnlyFirstHit, multi_ext_conn_mem,
                     global_mem, conn_mem, recv_data, regex_conv_rules,
-                    captured_data, first_hit)
+                    captured_data, first_hit, number_rule_checker_subworkers)
         else:
             break  # If first_hit is applicable, just avoid checking additional groups
 
@@ -985,7 +1023,7 @@ def detect_applicable_rules_using_rules_groups(cnv_rules, multi_ext_conn_mem,
 
 
 def detect_applicable_rules_using_regex(cnv_rules, multi_ext_conn_mem, global_mem,
-                                        conn_mem, recv_data):
+                                        conn_mem, recv_data, number_rule_checker_subworkers):
     '''
     Function to get the list of conversation rules applicables
     '''
@@ -996,14 +1034,15 @@ def detect_applicable_rules_using_regex(cnv_rules, multi_ext_conn_mem, global_me
     # Check rules
     regex_conv_rules, captured_data, first_hit = detect_applicable_rules_using_rules_regex(
         cnv_rules.Conversation.CustomRules.Rules, cnv_rules.ExtOperation.ConversationUseOnlyFirstHit,
-        multi_ext_conn_mem, global_mem, conn_mem, recv_data, regex_conv_rules, captured_data, first_hit)
+        multi_ext_conn_mem, global_mem, conn_mem, recv_data, regex_conv_rules, captured_data, first_hit,
+        number_rule_checker_subworkers)
 
     # Check groups
     if cnv_rules.Conversation.CustomRules.Groups is not None:
         regex_conv_rules, captured_data, first_hit = detect_applicable_rules_using_rules_groups(
             cnv_rules, multi_ext_conn_mem,
             global_mem, conn_mem, recv_data, regex_conv_rules,
-            captured_data, first_hit)
+            captured_data, first_hit, number_rule_checker_subworkers)
 
     return regex_conv_rules, captured_data
 

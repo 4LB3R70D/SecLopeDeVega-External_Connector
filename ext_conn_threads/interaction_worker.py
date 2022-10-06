@@ -38,7 +38,7 @@ class InteractionWorker:
 
     def __init__(self, ext_conn_controller, conversation_rules, connection_register,
                  activity_register, todo_list, exec_dashboard, hash_conversation_rules_used,
-                 cleaning_register, custom_functions_name):
+                 cleaning_register, custom_functions_name,number_rule_checker_subworkers):
         self.ext_conn_controller = ext_conn_controller
         self.cnv_rules = conversation_rules
         self.connection_register = connection_register
@@ -48,6 +48,7 @@ class InteractionWorker:
         self.hash_conversation_rules_used=hash_conversation_rules_used
         self.cleaning_register=cleaning_register
         self.custom_functions_name=custom_functions_name
+        self.number_rule_checker_subworkers=number_rule_checker_subworkers
 
     # ==========================================================================================
     # AUX FUNCTIONS
@@ -152,7 +153,8 @@ class InteractionWorker:
                             ext_conn_controller=self.ext_conn_controller,
                             hash_conversation_rules_used=self.hash_conversation_rules_used,
                             cleaning_register=self.cleaning_register,
-                            custom_functions_name=self.custom_functions_name)
+                            custom_functions_name=self.custom_functions_name,
+                            number_rule_checker_subworkers=self.number_rule_checker_subworkers)
 
                         new_thread = threading.Thread(
                             target=op_loops.udp_client,
@@ -178,7 +180,8 @@ class InteractionWorker:
                     ext_conn_controller=self.ext_conn_controller,
                     hash_conversation_rules_used=self.hash_conversation_rules_used,
                     cleaning_register=self.cleaning_register,
-                            custom_functions_name=self.custom_functions_name)
+                            custom_functions_name=self.custom_functions_name,
+                            number_rule_checker_subworkers=self.number_rule_checker_subworkers)
 
                 new_thread = threading.Thread(
                     target=op_loops.udp_server,
@@ -220,7 +223,8 @@ class InteractionWorker:
                             ext_conn_controller=self.ext_conn_controller,
                             hash_conversation_rules_used=self.hash_conversation_rules_used,
                             cleaning_register=self.cleaning_register,
-                            custom_functions_name=self.custom_functions_name)
+                            custom_functions_name=self.custom_functions_name,
+                            number_rule_checker_subworkers=self.number_rule_checker_subworkers)
 
                         new_thread = threading.Thread(
                             target=op_loops.tcp_or_dtls_client,
@@ -255,7 +259,8 @@ class InteractionWorker:
                             ext_conn_controller=self.ext_conn_controller,
                             hash_conversation_rules_used=self.hash_conversation_rules_used,
                             cleaning_register=self.cleaning_register,
-                            custom_functions_name=self.custom_functions_name)
+                            custom_functions_name=self.custom_functions_name,
+                            number_rule_checker_subworkers=self.number_rule_checker_subworkers)
 
                         new_thread = threading.Thread(
                             target=op_loops.tcp_or_dtls_server,

@@ -72,6 +72,7 @@ MILISECONDS_IN_A_SECOND = 1000
 BYTES_IN_A_MB = 1024**2
 START_ATTEMPTS = 3
 NONE_STRING_FORMAT = "None"
+DEFAULT_NUMBER_RULE_CHECKER_SUBWORKERS = 10
 
 # Config times: (timeout_ext_conn, check_time_operation_loop, engine_time_out, 
 # time_between_interaction_loops, time_between_async_loops)
@@ -642,6 +643,14 @@ def init_external_connector(init_logging_flag, arg_config_file, arg_ext_conn_ID,
                     redis_ip, redis_port, redis_password, redis_tls, redis_ca_cert,
                     redis_use_client_cert, redis_client_cert, redis_priv_key_protected,
                     redis_priv_key_password, redis_priv_key_client) = import_redis_config(ext_conn_config)
+                
+                # Initialise the number fo rule checker subworkers
+                config_number_rule_checker_subworkers = int(ext_conn_config['OPERATION']['NUMBER_RULE_CHECKER_SUBWORKERS'])
+                if config_number_rule_checker_subworkers > 0:
+                    number_rule_checker_subworkers = config_number_rule_checker_subworkers
+                else:
+                    number_rule_checker_subworkers = DEFAULT_NUMBER_RULE_CHECKER_SUBWORKERS
+                logger.info(f"Number of rule checker subworkers to use: '{number_rule_checker_subworkers}'")
 
                 # not multiexternal connector memory enable, or it is enabled and the configuration is loaded successfully
                 if not interlanguage_bool_check(cnv_rules.ExtOperation.MemVarMultiExtConnEnable) or (
@@ -691,7 +700,8 @@ def init_external_connector(init_logging_flag, arg_config_file, arg_ext_conn_ID,
                         redis_priv_key_client=redis_priv_key_client,
                         hash_conversation_rules_used=hash_conversation_rules_used,
                         cleaning_register=cleaning_register,
-                        custom_functions_name=custom_functions_name)
+                        custom_functions_name=custom_functions_name,
+                        number_rule_checker_subworkers=number_rule_checker_subworkers)
                 else:
                     success = False
                     logger.warning("Incorrect Redis configuration!")

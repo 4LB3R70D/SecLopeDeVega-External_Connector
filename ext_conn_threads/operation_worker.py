@@ -61,7 +61,7 @@ class OperationWorker:
 
     def __init__(self, conversation_rules, connection_register, activity_register, todo_list,
                  exec_dashboard, ext_conn_controller, hash_conversation_rules_used, 
-                 cleaning_register, custom_functions_name):
+                 cleaning_register, custom_functions_name, number_rule_checker_subworkers):
 
         self.cnv_rules = conversation_rules
         self.connection_register = connection_register
@@ -73,6 +73,7 @@ class OperationWorker:
         self.hash_conversation_rules_used = hash_conversation_rules_used
         self.cleaning_register = cleaning_register
         self.custom_functions_name = custom_functions_name
+        self.number_rule_checker_subworkers = number_rule_checker_subworkers
 
     # =========================================================================================
     # Identifying conection methods
@@ -538,7 +539,8 @@ class OperationWorker:
                 multi_ext_conn_mem,
                 global_mem,
                 conn_mem,
-                recv_data)
+                recv_data,
+                self.number_rule_checker_subworkers)
             # If no conversation rules are detected
             if not len(regex_conv_rules) > 0:
                 default_rule = self.cnv_rules.Conversation.Default

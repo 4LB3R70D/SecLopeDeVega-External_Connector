@@ -29,7 +29,8 @@ class ExtConnContext:
                  number_async_loops_to_clean_conn_register, restart_waiting_time, time_between_client_sockets_connection,
                  encrypted, initial_delay_client_mode_async_thread, redis_ip, redis_port, redis_password, redis_tls,
                  redis_ca_cert, redis_use_client_cert, redis_client_cert, redis_priv_key_protected, redis_priv_key_password,
-                 redis_priv_key_client, hash_conversation_rules_used, cleaning_register, custom_functions_name):
+                 redis_priv_key_client, hash_conversation_rules_used, cleaning_register, custom_functions_name,
+                 number_rule_checker_subworkers):
 
         # Added in the context object creation
         self.init_success_flag = init_success_flag
@@ -76,6 +77,7 @@ class ExtConnContext:
         self.hash_conversation_rules_used = hash_conversation_rules_used
         self.cleaning_register = cleaning_register
         self.custom_functions_name = custom_functions_name
+        self.number_rule_checker_subworkers = number_rule_checker_subworkers
 
         # Added in the operation of the external socket (they are thread safe)
         self.connection_register = None
