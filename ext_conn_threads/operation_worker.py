@@ -1153,7 +1153,7 @@ class OperationWorker:
         success_reconnection = False
 
         # TCP/TLS CLIENT & CLOSE AFTER ANSWER MODE: At this moment, the socket connection should
-        # be closed (server already answered)
+        # be closed (server has already answered)
         if client_and_close_after_answer_mode and (
                 connection_copy.status == connection.ConnectionStatus.OPEN):
             success_reconnection, connection_copy = self.tcp_or_dtls_client_reconnect(

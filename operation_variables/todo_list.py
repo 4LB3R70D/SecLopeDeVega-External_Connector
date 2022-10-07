@@ -234,14 +234,13 @@ class ToDoList:
         '''
         loop = self.get_loop(todo.loop_id)
 
-        if self.check_loop_conditions_ok(loop):
-            if loop is not None:
-                if self.check_loop_conditions_ok(loop):
-                    # Next loop iteration
-                    self.add_todos_from_loop(loop)
-                else:
-                    # Stop the loop
-                    self.remove_async_loop(todo.loop_id)
+        if loop is not None:
+            if self.check_loop_conditions_ok(loop):
+                # Next loop iteration
+                self.add_todos_from_loop(loop)
             else:
-                logger.warning(
-                    f"The loop with the ID:'{todo.loop_id}' not found!")
+                # Stop the loop
+                self.remove_async_loop(todo.loop_id)
+        else:
+            logger.warning(
+                f"The loop with the ID:'{todo.loop_id}' not found!")
