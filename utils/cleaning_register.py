@@ -18,19 +18,20 @@ to be cleaned before ending the execution of the external connector
 import threading
 import os
 
+
 class CleaningRegister:
 
     def __init__(self):
         self.lock = threading.Lock()
         self.list = set()
-        
+
     def add_new_temp_file_location(self, path):
         '''
         Method to add a new temporary file
         '''
         with self.lock:
             self.list.add(path)
-            
+
     def clean_all_temp_files(self):
         '''
         Method to clean all temproary files

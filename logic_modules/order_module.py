@@ -77,16 +77,15 @@ def process_new_order(order_raw, context):
     '''
     if order_raw == OrderType.ACCEPT_CONN.value:
         accept_connections_order(context)
-            
+
     elif order_raw == OrderType.NOT_ACCEPT_CONN.value:
         not_accept_connections_order(context)
-        
+
     elif order_raw == OrderType.DISCONNECT.value:
         disconnect_all_connections_order(context)
-        
+
     elif order_raw == OrderType.REBOOT.value:
         reboot_order(context)
-                
+
     elif order_raw == OrderType.SHUTDOWN.value:
         shutdown_order(context)
-            

@@ -57,6 +57,18 @@ class Loop:
         self.conn_id = conn_id
         self.async_rule_tuple_list_loop = async_rule_tuple_list_loop
         self.conditions = loop_info.Conditions
+        
+        # rule iteration counters: Key=rule_id, value=max_iteration
+        self.rule_iteration_max_list = dict()
+        # initialization of the counters
+        for conditional_rule in loop_info.ConditionalRules:
+            self.rule_iteration_max_list[conditional_rule.RuleID] = conditional_rule.MaxNumberIterations
+
+        # rule iteration counters: Key=rule_id, value=counter
+        self.rule_iteration_counter_list = dict()
+        # initialization of the counters
+        for async_rule_tuple in async_rule_tuple_list_loop:
+            self.rule_iteration_counter_list[async_rule_tuple[ASYNC_RULE_IN_RULE_TUPLE].Id] = 0
 
 
 class ToDoList:
@@ -89,16 +101,25 @@ class ToDoList:
         Function to add a new 'ToDo' in the list. The rule tuple received has the following format:
         (ID triggering rule[if any], delay, rule to execute)
         '''
-        new_id = self.get_new_todo_id()
-        new_todo = ToDo(new_id, conn_id, rule_tuple[ASYNC_RULE_IN_RULE_TUPLE], rule_tuple[DELAY_IN_RULE_TUPLE],
-                        rule_tuple[TRIGGERING_RULE_IN_RULE_TUPLE], loop_id)
 
-        with self.lock:
-            self.todo_list.add(new_todo)
+        add_todo_flag = True
 
-        logger.info(f"Added a new ToDo in the list to execute the rule:{rule_tuple[ASYNC_RULE_IN_RULE_TUPLE].Id}, " +
-                    f"with the ID:{new_id} for the connection:{conn_id}. The rule was triggered by the rule: " +
-                    f"{rule_tuple[TRIGGERING_RULE_IN_RULE_TUPLE]}")
+        # if async loop case, really checks if we need to add the rule
+        if loop_id > 0:
+            add_todo_flag = self.check_and_update_loop_rule_iteration_counter(
+                loop_id, rule_tuple[ASYNC_RULE_IN_RULE_TUPLE].Id)
+
+        if add_todo_flag:
+            new_id = self.get_new_todo_id()
+            new_todo = ToDo(new_id, conn_id, rule_tuple[ASYNC_RULE_IN_RULE_TUPLE],
+                            rule_tuple[DELAY_IN_RULE_TUPLE],
+                            rule_tuple[TRIGGERING_RULE_IN_RULE_TUPLE], loop_id)
+            with self.lock:
+                self.todo_list.add(new_todo)
+
+            logger.info(f"Added a new ToDo in the list to execute the rule:{rule_tuple[ASYNC_RULE_IN_RULE_TUPLE].Id}, " +
+                        f"with the ID:{new_id} for the connection:{conn_id}. The rule was triggered by the rule: " +
+                        f"{rule_tuple[TRIGGERING_RULE_IN_RULE_TUPLE]}")
 
     def get_todos_to_execute(self):
         '''
@@ -160,6 +181,30 @@ class ToDoList:
 
         return found_loop
 
+    def check_and_update_loop_rule_iteration_counter(self, loop_id, rule_id):
+        '''
+        Method to check and update the rule iteration counter of a given
+        loop and rule
+        '''
+        everything_ok = False
+        
+        with self.lock:
+            # find the loop
+            for loop in self.loop_list:
+                if loop.id == loop_id:
+                    
+                    # check the max number of iterations
+                    # if it is in use
+                    if loop.rule_iteration_max_list[rule_id] > 0:
+                        loop.rule_iteration_counter_list[rule_id] += 1
+                        if loop.rule_iteration_counter_list[rule_id] <= loop.rule_iteration_max_list[rule_id]:
+                            everything_ok = True
+                    else:
+                        everything_ok = True
+                    break
+                        
+        return everything_ok
+
     def check_loop_conditions_ok(self, loop):
         '''
         Mehtod to check if given a loop, the loop conditions are met or not
@@ -177,12 +222,16 @@ class ToDoList:
 
         return ok
 
-    def add_todos_from_loop(self, loop):
+    def add_todos_from_loop(self, loop, specific_rule_id_to_add=None):
         '''
-        Method to add new ToDos based on the loop information
+        Method to add new ToDos based on the loop information. If rule_of_the_loop_id
+        is 'None', this means all rules of the loop should be added in the ToDo list.
+        If it is not None, only one specific rule will be added in the loop
         '''
         for rule_tuple in loop.async_rule_tuple_list_loop:
-            self.add_new_todo(loop.conn_id, rule_tuple, loop_id=loop.id)
+            if (specific_rule_id_to_add is None or
+                    rule_tuple[ASYNC_RULE_IN_RULE_TUPLE].Id == specific_rule_id_to_add):
+                self.add_new_todo(loop.conn_id, rule_tuple, loop_id=loop.id)
 
     def add_async_loop(self, conn_id, loop_info, triggering_rule, async_rule_tuple_list_loop):
         '''
@@ -237,7 +286,7 @@ class ToDoList:
         if loop is not None:
             if self.check_loop_conditions_ok(loop):
                 # Next loop iteration
-                self.add_todos_from_loop(loop)
+                self.add_todos_from_loop(loop, todo.rule_to_execute.Id)
             else:
                 # Stop the loop
                 self.remove_async_loop(todo.loop_id)

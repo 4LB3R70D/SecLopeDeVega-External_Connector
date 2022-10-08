@@ -167,8 +167,7 @@ def start_operation(context):
         redis_priv_key_protected=context.redis_priv_key_protected,
         redis_priv_key_password=context.redis_priv_key_password,
         redis_priv_key_client=context.redis_priv_key_client,
-        overwrite_multi_ext_conn_mem_vars_during_init=
-            context.cnv_rules.ExtOperation.MultiExtConnMemOverwriteDuringInit)
+        overwrite_multi_ext_conn_mem_vars_during_init=context.cnv_rules.ExtOperation.MultiExtConnMemOverwriteDuringInit)
 
     # Only go on with the execution if Redis server is not used, or it is used and the connection is working
     if not connection_register.multi_ext_conn_mem_var_enable or (
@@ -199,12 +198,12 @@ def start_operation(context):
             cleaning_register=context.cleaning_register,
             custom_functions_name=context.custom_functions_name,
             number_rule_checker_subworkers=context.number_rule_checker_subworkers)
-        
+
         new_thread = threading.Thread(
             target=int_wrkr.start_interaction_worker,
             name="InteractionWrkr",
             args=(in_wrker,))
-        
+
         new_thread.start()
 
         # Start the oversee loop

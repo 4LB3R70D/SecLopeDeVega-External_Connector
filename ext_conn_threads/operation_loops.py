@@ -274,7 +274,8 @@ def udp_client_greetings_loop(op_wrker, connection_copy, sock):
             connection_copy, sock)
         if done and not conn_broken:
             # 12 - prepare async messages in the 'ToDo List' (if any)
-            detected_async_rules = op_wrker.detect_async_rules_for_beginning(connection_copy.id)
+            detected_async_rules = op_wrker.detect_async_rules_for_beginning(
+                connection_copy.id)
             connection_copy = register_async_rules(
                 op_wrker, detected_async_rules, connection_copy)
             # 13 - update the 'Connection Register'
@@ -297,7 +298,7 @@ def udp_core_loop(op_wrker, source_ip, source_port, message_received,
             op_wrker.detect_conversation_rules(connection_copy,
                                                message_received)
 
-        # 3,4,5,6 - check and update memory variables, execute built-in memory operaitons and custom functions; 
+        # 3,4,5,6 - check and update memory variables, execute built-in memory operaitons and custom functions;
         # and do the session ID change
         connection_copy = check_and_update_memory_and_session_and_do_memory_operations(
             op_wrker,
@@ -313,7 +314,8 @@ def udp_core_loop(op_wrker, source_ip, source_port, message_received,
                 connection_copy, None)
             if done_greeting_rule:
                 # 2 - get conversation rules applicable
-                detected_async_rules = op_wrker.detect_async_rules_for_beginning(connection_copy.id)
+                detected_async_rules = op_wrker.detect_async_rules_for_beginning(
+                    connection_copy.id)
                 # 12 - prepare async messages in the 'ToDo List' (if any)
                 connection_copy = register_async_rules(
                     op_wrker, detected_async_rules, connection_copy, message_received)
@@ -326,7 +328,7 @@ def udp_core_loop(op_wrker, source_ip, source_port, message_received,
             connection_copy, sock)
 
         if not conn_broken:
-            # 8,9,10, 11 - check and update memory variables, execute built-in memory operaitons and custom functions; 
+            # 8,9,10, 11 - check and update memory variables, execute built-in memory operaitons and custom functions;
             # and do the session ID change
             connection_copy = check_and_update_memory_and_session_and_do_memory_operations(
                 op_wrker,
@@ -356,7 +358,7 @@ def udp_core_loop(op_wrker, source_ip, source_port, message_received,
                 captured_data=captured_data,
                 end_connection=end_connection,
                 ext_input=message_received)
-            
+
     else:  # </if connection_copy>
         logger.warning("Connection copy obtained is None/null")
 
@@ -491,7 +493,8 @@ def tcp_or_dtls_greetings_loop(tcp_dtls_conn_ready_flag, op_wrker, addr, socket_
 
             if done and not conn_broken:
                 # 12 - prepare async messages in the 'ToDo List' (if any)
-                detected_async_rules = op_wrker.detect_async_rules_for_beginning(connection_copy.id)
+                detected_async_rules = op_wrker.detect_async_rules_for_beginning(
+                    connection_copy.id)
                 async_rules_check_for_socket_close = (
                     detected_async_rules is None or not len(detected_async_rules) > 0)
 
@@ -581,7 +584,7 @@ def tcp_or_dtls_core_loop(op_wrker, addr, socket_conn, ext_input, tcp_dtls_conn_
                         default_rule is not None and interlanguage_bool_check(default_rule.Enable)) or (
                         empty_rule is not None and interlanguage_bool_check(empty_rule.Enable))
 
-                # 3,4,5,6 - check and update memory variables, execute built-in memory operaitons and custom functions; 
+                # 3,4,5,6 - check and update memory variables, execute built-in memory operaitons and custom functions;
                 # and do the session ID change
                 connection_copy = check_and_update_memory_and_session_and_do_memory_operations(
                     op_wrker,
@@ -614,7 +617,7 @@ def tcp_or_dtls_core_loop(op_wrker, addr, socket_conn, ext_input, tcp_dtls_conn_
                         connection_copy, socket_conn)
 
                     if not conn_broken:
-                        # 8,9,10,11 - check and update memory variables, execute built-in memory operaitons and custom functions; 
+                        # 8,9,10,11 - check and update memory variables, execute built-in memory operaitons and custom functions;
                         # and do the session ID change
                         connection_copy = check_and_update_memory_and_session_and_do_memory_operations(
                             op_wrker,

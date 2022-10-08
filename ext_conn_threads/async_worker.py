@@ -54,7 +54,7 @@ def run_async_worker(exec_dashboard, connection_register, todo_list, cnv_rules, 
     initial_async_delay = get_initial_async_delay(
         initial_delay_client_mode_async_thread, time_between_async_loops)
 
-    # Background loop 
+    # Background loop
     while (exec_dashboard.check_execution_flag()):
 
         if ext_conn_controller.client_mode:

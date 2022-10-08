@@ -74,7 +74,7 @@ START_ATTEMPTS = 3
 NONE_STRING_FORMAT = "None"
 DEFAULT_NUMBER_RULE_CHECKER_SUBWORKERS = 10
 
-# Config times: (timeout_ext_conn, check_time_operation_loop, engine_time_out, 
+# Config times: (timeout_ext_conn, check_time_operation_loop, engine_time_out,
 # time_between_interaction_loops, time_between_async_loops)
 EXT_CONN_TIMEOUT = 0
 CHECK_TIME_OPERATION_TIMEOUT = 1
@@ -88,9 +88,8 @@ TIME_BETWEEN_CLIENT_SOCKET_CLOSE_CONNECT = 8
 DELAY_ASYNC_THREAD = 9
 
 
-
 def init_file_logging(config_logging_log_folder, dt_string, logging_formatter,
-                      conf_log_prefix, conf_log_extension, rotation=False, 
+                      conf_log_prefix, conf_log_extension, rotation=False,
                       logging_log_rotation_max_size=None,
                       logging_log_rotation_file_number=None, ):
     '''
@@ -100,13 +99,12 @@ def init_file_logging(config_logging_log_folder, dt_string, logging_formatter,
         log_prefix = conf_log_prefix
     else:
         log_prefix = "slv_ext_conn_"
-    
+
     if conf_log_extension is not None and len(conf_log_extension) > 0:
         log_extension = conf_log_extension
     else:
         log_extension = ".log"
-    
-    
+
     filename_log = os.path.join(
         config_logging_log_folder, log_prefix + dt_string + log_extension)
     if not os.path.isdir(config_logging_log_folder):
@@ -156,9 +154,9 @@ def init_logging(ext_conn_config):
     config_logging_level = ext_conn_config['LOGGING']['LEVEL']
     config_logging_log_folder = ext_conn_config['LOGGING']['LOG_FOLDER']
     config_logging_log_mode = ext_conn_config['LOGGING']['LOG_MODE']
-    conf_log_prefix  = ext_conn_config['LOGGING']['LOG_PREFIX']
-    conf_log_extension  = ext_conn_config['LOGGING']['LOG_EXTENSION']
-    
+    conf_log_prefix = ext_conn_config['LOGGING']['LOG_PREFIX']
+    conf_log_extension = ext_conn_config['LOGGING']['LOG_EXTENSION']
+
     config_logging_log_rotation_max_size =\
         ext_conn_config['LOGGING']['LOG_ROTATION_MAX_SIZE']
     if ((type(config_logging_log_rotation_max_size) == int) and
@@ -187,20 +185,20 @@ def init_logging(ext_conn_config):
     # File logging
     if config_logging_log_mode.upper() == "FILE":
         init_file_logging(config_logging_log_folder, dt_string,
-                          logging_formatter, conf_log_prefix, 
+                          logging_formatter, conf_log_prefix,
                           conf_log_extension)
 
     # Console and file logging
     elif config_logging_log_mode.upper() == "BOTH":
         init_file_logging(config_logging_log_folder, dt_string,
-                          logging_formatter, conf_log_prefix, 
+                          logging_formatter, conf_log_prefix,
                           conf_log_extension)
         init_console_logging(logging_formatter)
 
     # File logging with log rotation
     elif config_logging_log_mode.upper() == "FILE_ROTATION":
         init_file_logging(config_logging_log_folder, dt_string,
-                          logging_formatter, conf_log_prefix, 
+                          logging_formatter, conf_log_prefix,
                           conf_log_extension, True,
                           logging_log_rotation_max_size,
                           logging_log_rotation_file_number)
@@ -208,7 +206,7 @@ def init_logging(ext_conn_config):
     # Console and file logging with log rotation
     elif config_logging_log_mode.upper() == "BOTH_ROTATION":
         init_file_logging(config_logging_log_folder, dt_string,
-                          logging_formatter, conf_log_prefix, 
+                          logging_formatter, conf_log_prefix,
                           conf_log_extension, True,
                           logging_log_rotation_max_size,
                           logging_log_rotation_file_number)
@@ -643,14 +641,16 @@ def init_external_connector(init_logging_flag, arg_config_file, arg_ext_conn_ID,
                     redis_ip, redis_port, redis_password, redis_tls, redis_ca_cert,
                     redis_use_client_cert, redis_client_cert, redis_priv_key_protected,
                     redis_priv_key_password, redis_priv_key_client) = import_redis_config(ext_conn_config)
-                
+
                 # Initialise the number fo rule checker subworkers
-                config_number_rule_checker_subworkers = int(ext_conn_config['OPERATION']['NUMBER_RULE_CHECKER_SUBWORKERS'])
+                config_number_rule_checker_subworkers = int(
+                    ext_conn_config['OPERATION']['NUMBER_RULE_CHECKER_SUBWORKERS'])
                 if config_number_rule_checker_subworkers > 0:
                     number_rule_checker_subworkers = config_number_rule_checker_subworkers
                 else:
                     number_rule_checker_subworkers = DEFAULT_NUMBER_RULE_CHECKER_SUBWORKERS
-                logger.info(f"Number of rule checker subworkers to use: '{number_rule_checker_subworkers}'")
+                logger.info(
+                    f"Number of rule checker subworkers to use: '{number_rule_checker_subworkers}'")
 
                 # not multiexternal connector memory enable, or it is enabled and the configuration is loaded successfully
                 if not interlanguage_bool_check(cnv_rules.ExtOperation.MemVarMultiExtConnEnable) or (

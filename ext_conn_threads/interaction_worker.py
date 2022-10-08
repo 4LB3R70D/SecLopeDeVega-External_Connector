@@ -38,17 +38,17 @@ class InteractionWorker:
 
     def __init__(self, ext_conn_controller, conversation_rules, connection_register,
                  activity_register, todo_list, exec_dashboard, hash_conversation_rules_used,
-                 cleaning_register, custom_functions_name,number_rule_checker_subworkers):
+                 cleaning_register, custom_functions_name, number_rule_checker_subworkers):
         self.ext_conn_controller = ext_conn_controller
         self.cnv_rules = conversation_rules
         self.connection_register = connection_register
         self.activity_register = activity_register
         self.todo_list = todo_list
         self.exec_dashboard = exec_dashboard
-        self.hash_conversation_rules_used=hash_conversation_rules_used
-        self.cleaning_register=cleaning_register
-        self.custom_functions_name=custom_functions_name
-        self.number_rule_checker_subworkers=number_rule_checker_subworkers
+        self.hash_conversation_rules_used = hash_conversation_rules_used
+        self.cleaning_register = cleaning_register
+        self.custom_functions_name = custom_functions_name
+        self.number_rule_checker_subworkers = number_rule_checker_subworkers
 
     # ==========================================================================================
     # AUX FUNCTIONS
@@ -135,7 +135,7 @@ class InteractionWorker:
         '''
         logger.info("Starting the operation as an UDP client")
 
-        while(self.exec_dashboard.check_execution_flag()):
+        while (self.exec_dashboard.check_execution_flag()):
             events = self.ext_conn_controller.wait_for_events()
             # Check events (if any)
             if events is not None and len(events) > 0:
@@ -167,7 +167,7 @@ class InteractionWorker:
         Method to start the execution as UDP server
         '''
         logger.info("Starting the operation as a UDP server")
-        while(self.exec_dashboard.check_execution_flag()):
+        while (self.exec_dashboard.check_execution_flag()):
             message_received, source_ip, source_port = self.ext_conn_controller.udp_listen_socket()
             if message_received is not None:
                 # Creating the interaction worker and launch it in a new thread
@@ -180,8 +180,8 @@ class InteractionWorker:
                     ext_conn_controller=self.ext_conn_controller,
                     hash_conversation_rules_used=self.hash_conversation_rules_used,
                     cleaning_register=self.cleaning_register,
-                            custom_functions_name=self.custom_functions_name,
-                            number_rule_checker_subworkers=self.number_rule_checker_subworkers)
+                    custom_functions_name=self.custom_functions_name,
+                    number_rule_checker_subworkers=self.number_rule_checker_subworkers)
 
                 new_thread = threading.Thread(
                     target=op_loops.udp_server,
@@ -205,7 +205,7 @@ class InteractionWorker:
         self.ext_conn_controller.tcp_connect_all_sockets()
         logger.info(
             "TCP ot DTLS connections established successfully with the target")
-        while(self.exec_dashboard.check_execution_flag()):
+        while (self.exec_dashboard.check_execution_flag()):
             events = self.ext_conn_controller.wait_for_events()
             # Check events (if any)
             if events is not None and len(events) > 0:
@@ -240,7 +240,7 @@ class InteractionWorker:
         logger.info("Starting the operation as a TCP or DTLS server")
         self.ext_conn_controller.enable_listen_socket()
 
-        while(self.exec_dashboard.check_execution_flag()):
+        while (self.exec_dashboard.check_execution_flag()):
             events = self.ext_conn_controller.wait_for_events()
             # Check events (if any)
             if events is not None and len(events) > 0:
@@ -304,7 +304,7 @@ def check_execution_conditions(multi_ext_conn_mem, conditional_execution_info):
                 if (condition.Value == multi_ext_conn_mem[mem_element_name] or
                     (condition.ReferenceVariable in multi_ext_conn_mem and
                      compare_two_memory_variables_values(
-                         multi_ext_conn_mem[mem_element_name], 
+                         multi_ext_conn_mem[mem_element_name],
                          multi_ext_conn_mem[condition.ReferenceVariable])
                      )):
                     conditional_variable_value_ok |= True
@@ -356,7 +356,7 @@ def start_interaction_worker(in_wrkr):
             "Conditional execution enabled, waiting for execution conditions to be satisfied...")
         all_conditions_ok = False
 
-        while(in_wrkr.exec_dashboard.check_execution_flag() and not all_conditions_ok):
+        while (in_wrkr.exec_dashboard.check_execution_flag() and not all_conditions_ok):
             multi_ext_conn_mem = in_wrkr.connection_register.get_copy_multi_ext_connectors_memory()
             all_conditions_ok, ip, port = check_execution_conditions(multi_ext_conn_mem,
                                                                      in_wrkr.cnv_rules.ExtOperation.ConditionalExecution)
@@ -374,7 +374,7 @@ def start_interaction_worker(in_wrkr):
 
     # External interaction is started
     in_wrkr.exec_dashboard.mark_interaction_as_started()
-    
+
     # UDP CLIENT without DTLS
     if in_wrkr.ext_conn_controller.client_mode and in_wrkr.ext_conn_controller.udp_protocol\
             and not in_wrkr.ext_conn_controller.encrypted:

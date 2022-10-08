@@ -109,7 +109,7 @@ def do_memory_operation(operation, input):
     '''
     results = list()
     operation_done = False
-    
+
     def logic_and(input):
         '''
         internal funcion for doing an AND operation
@@ -125,7 +125,7 @@ def do_memory_operation(operation, input):
                     operation_result &= element
                 operation_done = True
         return operation_result, operation_done
-        
+
     def logic_or(input):
         '''
         internal function for doing an OR operation

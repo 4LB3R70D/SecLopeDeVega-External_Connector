@@ -306,7 +306,7 @@ def sort_activities_to_be_sent(not_read_activities):
     lowest_ID = 1
     greatest_ID = 1
 
-    while(len(not_read_activities) > 0):
+    while (len(not_read_activities) > 0):
         lowest_ID_index = 0
 
         # find the lowest ID & greateast ID
@@ -355,12 +355,12 @@ class ActivityRegister:
 
         return id
 
-    def add_activity(self, new_conn_flag = None, tcp_conn_ready_flag= None, ip= None, port= None, 
-                     connection_id= None, greetings_rule= None, executed_regex_conv_rules= None, 
-                     default_rule= None, empty_rule= None, detected_async_rules= None, captured_data= None, 
-                     end_connection= None, ext_input= None, async_activity_flag= None, executed_async_rules= None,
-                     list_connections_timed_out= None, encoding= None, conn_broken= None, multi_ext_conn_mem= None,
-                     global_mem= None, conn_mem= None, protocol= None, hash_conversation_rules_used= None):
+    def add_activity(self, new_conn_flag=None, tcp_conn_ready_flag=None, ip=None, port=None,
+                     connection_id=None, greetings_rule=None, executed_regex_conv_rules=None,
+                     default_rule=None, empty_rule=None, detected_async_rules=None, captured_data=None,
+                     end_connection=None, ext_input=None, async_activity_flag=None, executed_async_rules=None,
+                     list_connections_timed_out=None, encoding=None, conn_broken=None, multi_ext_conn_mem=None,
+                     global_mem=None, conn_mem=None, protocol=None, hash_conversation_rules_used=None):
         '''
         Method to add a new activity in the register
         '''

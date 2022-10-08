@@ -165,7 +165,7 @@ class Connection:
             self.memory[mem_var_name] = mem_var_new_value
             success = True
             logger.info(f"Memory variable '{mem_var_name}' in the connection:{self.id} updated. " +
-                         f"New value: '{mem_var_new_value}'")
+                        f"New value: '{mem_var_new_value}'")
         else:
             logger.warning(
                 f"Not found the memory variable '{mem_var_name}' in the connection:{self.id}")

@@ -112,27 +112,26 @@ class ExecDashboard:
                 result = True
                 self.execution_restart = False
         return result
-    
+
     def enable_restart_flag(self):
         '''
         Method to enable the external connector restart flag
         '''
         with self.lock:
             self.execution_restart = True
-            
+
     def mark_interaction_as_started(self):
         '''
         Method to mark that interaction with external elemens has started
         '''
         with self.lock:
             self.interaction_started = True
-            
+
     def is_interaction_started(self):
         '''
         Method to return if the interaction with external elemens has started
         '''
         with self.lock:
             result = self.interaction_started
-            
-        return result
 
+        return result

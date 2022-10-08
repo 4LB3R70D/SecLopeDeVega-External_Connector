@@ -295,9 +295,9 @@ class ConnectionRegister:
 
                 # For each not open connection in the register (closed or timeout)
                 if conn.status != connection.ConnectionStatus.OPEN:
-                        self.register.pop(conn_id)
-                        logger.debug(
-                            f"The connection:{conn.id} was removed from the connection register")
+                    self.register.pop(conn_id)
+                    logger.debug(
+                        f"The connection:{conn.id} was removed from the connection register")
 
     # ==========================================================================================
     # DETECT & FIND METHODS
@@ -818,7 +818,7 @@ class ConnectionRegister:
 
         return success
 
-    def modify_memory_variable(self, mem_var_name, mem_var_new_value, memory_type, 
+    def modify_memory_variable(self, mem_var_name, mem_var_new_value, memory_type,
                                connection_id=None):
         '''
         Method to update a given memory variable using a new value

@@ -35,6 +35,7 @@ INT = "int"
 FLOAT = "float"
 STRING = "string"
 
+
 def interlanguage_bool_check(value_to_check):
     '''
     Auxiliary function to check if a value is True either in Go or Python
@@ -70,6 +71,7 @@ def get_python_type(mem_variable_type):
         py_type = float
 
     return py_type
+
 
 def get_pythonic_value(type_to_transform, value_to_transform):
     '''

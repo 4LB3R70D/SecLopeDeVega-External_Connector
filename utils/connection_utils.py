@@ -279,6 +279,9 @@ def get_mem_var_names_to_report(conv_rules_mem_variables):
     at the time of reporting memory
     '''
     reporting_list = dict()
+    # Remove file importing information 
+    conv_rules_mem_variables.Import = None
+    
     for _, mem_var_set in conv_rules_mem_variables.__dict__.items():
         if mem_var_set  is not None:
             for element in mem_var_set:

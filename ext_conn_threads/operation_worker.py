@@ -60,7 +60,7 @@ class OperationWorker:
     '''
 
     def __init__(self, conversation_rules, connection_register, activity_register, todo_list,
-                 exec_dashboard, ext_conn_controller, hash_conversation_rules_used, 
+                 exec_dashboard, ext_conn_controller, hash_conversation_rules_used,
                  cleaning_register, custom_functions_name, number_rule_checker_subworkers):
 
         self.cnv_rules = conversation_rules
@@ -422,7 +422,7 @@ class OperationWorker:
                 conv_mod.execute_custom_function_pre_post_processor(
                     raw_input_output, custom_function, multi_ext_conn_mem,
                     global_mem, conn_mem, connection_copy.ip, connection_copy.port,
-                    connection_copy.session_key, connection_copy.session_value, 
+                    connection_copy.session_key, connection_copy.session_value,
                     self.custom_functions_name)
 
             self.do_memory_updates(memory_mod_multi, MULTI_EXT_CONNECTORS)
@@ -583,7 +583,7 @@ class OperationWorker:
             async_rules)
 
         if self.cnv_rules.Conversation.CustomRules.Groups is not None:
-            
+
             # Get copy of memory variables
             multi_ext_conn_mem, global_mem, conn_mem = self.get_memories_copy(
                 connection_id)
@@ -764,13 +764,13 @@ class OperationWorker:
 
             # Detect if there is any fork action to do (spawn a new external connector)
             if executed_rule.Fork is not None and interlanguage_bool_check(executed_rule.Fork.Enable):
-                
+
                 # Determine how many instances should start
                 if executed_rule.Fork.NumberOfInstances > 1:
                     number_instances = executed_rule.Fork.NumberOfInstances
                 else:
-                     number_instances = 1
-                    
+                    number_instances = 1
+
                     # Start as many instances as required
                 for i in range(number_instances):
                     subprocess.run(['python',
@@ -778,9 +778,10 @@ class OperationWorker:
                                     BANNER_COMMAND_LINE_ARGS_KEY_SHORT,
                                     CONFIG_COMMAND_LINE_ARGS_KEY_SHORT, executed_rule.Fork.Config,
                                     ID_COMMAND_LINE_ARGS_KEY_SHORT, executed_rule.Fork.ExtConnID,
-                                    PASS_COMMAND_LINE_ARGS_KEY_SHORT, executed_rule.Fork.Secret], 
+                                    PASS_COMMAND_LINE_ARGS_KEY_SHORT, executed_rule.Fork.Secret],
                                    shell=False)
-                    logger.warning(f"New external connector created! {i+1}/{number_instances}")
+                    logger.warning(
+                        f"New external connector created! {i+1}/{number_instances}")
 
         return async_rules
 

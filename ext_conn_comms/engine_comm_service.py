@@ -49,17 +49,18 @@ https://pyzmq.readthedocs.io/en/latest/
 https://zguide.zeromq.org/
 '''
 
-def check_engine_ip (engine_ip):
+
+def check_engine_ip(engine_ip):
     '''
     This function checks if a provided engine IP is valid, and if it is ipv4 or ipv6
     '''
     ip_valid = False
     ip6 = False
     if (engine_ip is not None and
-        len(engine_ip) > 0): 
+            len(engine_ip) > 0):
         ip_valid = True
         ip6 = False if type(ip_address(engine_ip)) is IPv4Address else True
-    
+
     return ip_valid, ip6
 
 
@@ -72,14 +73,14 @@ def connect_engine(engine_ip, engine_port, ext_conn_ID, zmq_context=None):
     ip_valid = False
     ip6 = False
     zmq_socket = None
-    
+
     try:
-        ip_valid, ip6 = check_engine_ip (engine_ip)
+        ip_valid, ip6 = check_engine_ip(engine_ip)
     except ValueError:
         logger.error("Invalid engine IP")
 
     # check if values are not 'null' and the port is an integer
-    if  ip_valid and (
+    if ip_valid and (
         engine_port is not None) and (
             type(engine_port) == int):
         # check if an existing zmq context is passed as parameter
@@ -89,7 +90,7 @@ def connect_engine(engine_ip, engine_port, ext_conn_ID, zmq_context=None):
         # https://zguide.zeromq.org/docs/chapter3/#The-Asynchronous-Client-Server-Pattern
         zmq_socket = zmq_context.socket(zmq.DEALER)
         zmq_socket.identity = ext_conn_ID.encode('utf-8')
-        zmq_socket.setsockopt(zmq.IPV6, ip6);
+        zmq_socket.setsockopt(zmq.IPV6, ip6)
         zmq_socket.connect(f'tcp://{engine_ip}:{engine_port}')
         success_engine = True
     else:
@@ -165,7 +166,7 @@ def zeromq_message_delivery(msg, zmq_socket, engine_ip, engine_port,
     delivered = False
 
     # try to send the message (3 attempts)
-    while((retries_left > 0) and not delivered):
+    while ((retries_left > 0) and not delivered):
 
         # sending the message & wait a bit for getting a response
         zmq_socket.send_string(msg)
@@ -670,7 +671,7 @@ def send_info_to_engine(msg_type, info=None, ext_conn_context=None, v_zmq_socket
 
         # is the engine busy?
         elif busy_flag:
-            if(busy_retries <= 3):
+            if (busy_retries <= 3):
                 # wait a random time of seconds
                 wait_time = random.uniform(MIN_WAITING_TIME_FOR_ENGINE_BUSY,
                                            MAX_WAITING_TIME_FOR_ENGINE_BUSY)

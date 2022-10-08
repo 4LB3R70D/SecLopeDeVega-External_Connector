@@ -78,7 +78,7 @@ def remove_request_from_processing_list_for_new_conn(addr):
             success = True
     if not success:
         logger.debug(f"Request from: {addr}, not found in the request processing list of "
-                       + "existing connection requests")
+                     + "existing connection requests")
 
 
 def remove_request_from_processing_list_for_existing_conn(addr):
@@ -92,7 +92,7 @@ def remove_request_from_processing_list_for_existing_conn(addr):
             success = True
     if not success:
         logger.debug(f"Request from: {addr}, not found in the request processing list of "
-                       + "existing connection requests")
+                     + "existing connection requests")
 
 
 def remove_request_from_processing_list_for_managing_conn_closing_after_answering(addr):
@@ -107,7 +107,7 @@ def remove_request_from_processing_list_for_managing_conn_closing_after_answerin
             success = True
     if not success:
         logger.debug(f"Request from: {addr}, not found in the request processing list for "
-                       + "managing closing of connections")
+                     + "managing closing of connections")
 
 # ==========================================================================================
 # CHECKING FUNCTIONS

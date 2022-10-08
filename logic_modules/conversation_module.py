@@ -378,7 +378,7 @@ def prepare_mem_variable_to_be_modified(memory_variable_name, memory_variable_ra
             memory_variable_name, memory_variable_raw_value,
             conn_mem, memory_reference_variable,
             multi_ext_conn_mem, global_mem, conn_mem)
-        
+
         logger.debug(
             f"The memory variable '{memory_variable_name}' found to be updated found in the connection memory")
 
@@ -436,7 +436,7 @@ def get_potential_memory_mods_using_captured_data(captured_data, multi_ext_conn_
             for memory_variable, capture in rule_capturing[CAPTURES].items():
 
                 # add it in the modification list
-                # memory_reference_variable = None 
+                # memory_reference_variable = None
                 # # (we are not using a memory variable as reference here)
                 memory_mod_for_capturing_multi_ext_conn_mem, memory_mod_for_capturing_global,\
                     memory_mod_for_capturing_conn = prepare_mem_variable_to_be_modified(
@@ -608,7 +608,8 @@ def check_and_import_custom_function(function_name, custom_functions_name):
     Function to import the custom functions module and look for an specific function
     '''
     found_function = False
-    slv_custom_functions_mod = check_and_import_the_custom_functions_module(custom_functions_name)
+    slv_custom_functions_mod = check_and_import_the_custom_functions_module(
+        custom_functions_name)
     if slv_custom_functions_mod is not None:
         found_function = find_custom_function(
             function_name, slv_custom_functions_mod)
@@ -619,7 +620,7 @@ def check_and_import_custom_function(function_name, custom_functions_name):
 
 
 def execute_custom_function_pre_post_processor(raw_input_output, custom_function_pre_post_processor, multi_ext_conn_mem,
-                                               global_mem, conn_mem, ip, port, session_key, session_value, 
+                                               global_mem, conn_mem, ip, port, session_key, session_value,
                                                custom_functions_name):
     '''
     Function to execute the custom function preprocessor
@@ -640,7 +641,7 @@ def execute_custom_function_pre_post_processor(raw_input_output, custom_function
 
     memory_mod_for_functions_multi_ext_conn_mem, memory_mod_for_functions_global, memory_mod_for_functions_conn, \
         results = custom_function_execution(custom_function_pre_post_processor, raw_input_output, multi_ext_conn_mem,
-                                            global_mem, conn_mem, ip, port, session_key, session_value, 
+                                            global_mem, conn_mem, ip, port, session_key, session_value,
                                             custom_functions_name)
 
     # the first element has to be the processed input/output
@@ -715,7 +716,7 @@ def custom_function_execution(custom_function, external_input_output, multi_ext_
 
 
 def get_potential_memory_mods_using_bultin_mem_ops(conv_rules, external_input, multi_ext_conn_mem,
-                                                   global_mem, conn_mem, ip, port, session_key, 
+                                                   global_mem, conn_mem, ip, port, session_key,
                                                    session_value):
     '''
     Function to get memory modifications as results of the execution of bultin memory operations
@@ -748,7 +749,7 @@ def get_potential_memory_mods_using_bultin_mem_ops(conv_rules, external_input, m
 
 
 def get_potential_memory_mods_using_custom_functions(conv_rules, external_input, multi_ext_conn_mem,
-                                                     global_mem, conn_mem, ip, port, session_key, 
+                                                     global_mem, conn_mem, ip, port, session_key,
                                                      session_value, custom_functions_name):
     '''
     Function to get memory modifications as results of the execution of custom functions
@@ -929,15 +930,16 @@ def detect_applicable_rules_using_rules_regex(rules, first_hit_applicable, multi
     '''
     Function to get the list of conversation rules applicables using rules (no groups)
     '''
-    first_hit_applicable_scenario = interlanguage_bool_check(first_hit_applicable)
-    
+    first_hit_applicable_scenario = interlanguage_bool_check(
+        first_hit_applicable)
+
     # Not parallel rule checking to ensure first hit approach
     if first_hit_applicable_scenario:
         for rule in rules:
             applicable, regex_conv_rules, captured_data = evaluate_rule_using_regex(
                 rule, multi_ext_conn_mem, global_mem, conn_mem,
                 recv_data, regex_conv_rules, captured_data)
-            
+
             # This will be executed in the first applicable rule, as well as in any loop.
             # But if the first the condition is applicable no more loops will be executed => BREAK
             # are we in the scenario of only the first hit, and the hit has already happened?
@@ -947,19 +949,19 @@ def detect_applicable_rules_using_rules_regex(rules, first_hit_applicable, multi
                     f"Since the flag 'conversation_use_only_first_hit' is enabled, " +
                     "no more rules will be detected")
                 break
-    else:   
+    else:
         # https://docs.python.org/3/library/concurrent.futures.html
-        with concurrent.futures.ThreadPoolExecutor(max_workers = number_rule_checker_subworkers) as executor:
-            future_results = [executor.submit(evaluate_rule_using_regex, rule, multi_ext_conn_mem, global_mem, 
-                                            conn_mem, recv_data, list(), list()) for rule in rules]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=number_rule_checker_subworkers) as executor:
+            future_results = [executor.submit(evaluate_rule_using_regex, rule, multi_ext_conn_mem, global_mem,
+                                              conn_mem, recv_data, list(), list()) for rule in rules]
             done = False
             future_results_to_check = future_results
-        
+
             while (not done):
                 # reset the list for the next iteration
                 next_iteration_future_results_to_check = list()
-                
-                for rule_result in future_results_to_check: 
+
+                for rule_result in future_results_to_check:
                     # is the result available, and still work to do?
                     if rule_result.done():
                         applicable, regex_conv_rules_for_rule, captured_data_for_rule = rule_result.result()
@@ -967,17 +969,17 @@ def detect_applicable_rules_using_rules_regex(rules, first_hit_applicable, multi
                             regex_conv_rules.extend(regex_conv_rules_for_rule)
                             captured_data.extend(captured_data_for_rule)
                     else:
-                        next_iteration_future_results_to_check.append(rule_result)     
-                
+                        next_iteration_future_results_to_check.append(
+                            rule_result)
+
                 # Check if all rules have been already checked (no rules to check in the next iteration)
                 if len(next_iteration_future_results_to_check) == 0:
                     done = True
                 else:
                     future_results_to_check = next_iteration_future_results_to_check
-                
+
             if done:
                 executor.shutdown()
-                            
 
     return regex_conv_rules, captured_data, first_hit
 
@@ -1003,7 +1005,7 @@ def detect_applicable_rules_using_rules_groups(cnv_rules, multi_ext_conn_mem,
 
             # Check if the group is applicable via Memory variables
             if (group is not None and len(group.Rules) > 0 and
-                group.MemConditions is not None and len(group.MemConditions) >0):
+                    group.MemConditions is not None and len(group.MemConditions) > 0):
                 memory_conditions_group = is_group_applicable(
                     group, multi_ext_conn_mem, global_mem, conn_mem)
 
@@ -1080,8 +1082,8 @@ def get_parameter_value(parameter, multi_ext_conn_mem, global_mem, conn_mem, ses
     return param_value
 
 
-def substitute_response_parameters (parameter_list,multi_ext_conn_mem, global_mem, conn_mem, 
-                                    session_key, session_value, ip, port, conn_id, response):
+def substitute_response_parameters(parameter_list, multi_ext_conn_mem, global_mem, conn_mem,
+                                   session_key, session_value, ip, port, conn_id, response):
     '''
     Function to modify the response parameters for the values of the memory variables
     '''
@@ -1094,15 +1096,16 @@ def substitute_response_parameters (parameter_list,multi_ext_conn_mem, global_me
         # substitute the paramater for the corresponding value (if not None/null)
         if parameter is not None:
             response = re.sub("{{"+parameter+"}}",
-                                str(paremeter_value), response)
+                              str(paremeter_value), response)
             logger.info(f"Detected parameter: '{parameter}' in the response for the connection:" +
                         f"{conn_id}, parameter value added: '{paremeter_value}'")
         else:
             logger.warning("The detected parameter in the response has no value to use! " +
-                            f"Parameter: '{{{parameter}}}' " +
-                            f"for the response:'{response}' in the connection:{conn_id}")
-            
+                           f"Parameter: '{{{parameter}}}' " +
+                           f"for the response:'{response}' in the connection:{conn_id}")
+
     return response
+
 
 def add_response_parameters(response, multi_ext_conn_mem, global_mem, conn_mem, session_key,
                             session_value, conn_id, ip, port):
@@ -1113,15 +1116,15 @@ def add_response_parameters(response, multi_ext_conn_mem, global_mem, conn_mem, 
     parameters_pattern = "(?<={{)(.*?)(?=}})"
     parameter_list = re.findall(parameters_pattern, response)
     detected_parameters = len(parameter_list)
-    
+
     while detected_parameters > 0:
         # result = [par1, par2, par3]
-        response = substitute_response_parameters (parameter_list,multi_ext_conn_mem, global_mem, 
-                                                   conn_mem, session_key, session_value, ip, port, 
-                                                   conn_id, response)
+        response = substitute_response_parameters(parameter_list, multi_ext_conn_mem, global_mem,
+                                                  conn_mem, session_key, session_value, ip, port,
+                                                  conn_id, response)
         parameter_list = re.findall(parameters_pattern, response)
         detected_parameters = len(parameter_list)
-        
+
     return response
 
 
