@@ -63,7 +63,11 @@ As far as the architecture is respective, this software is made up of two compon
 For more and detailed information, please check the documentation of the project. You can find it [here](https://seclopedevega-docs.readthedocs.io), 
 and the documentation sphinx project can be found in this [repository](https://github.com/4LB3R70D/SecLopeDeVega-Docs)
 
-Note
------
-   Please, consider this project as **somewhere in between an alpha and beta version** since some capabilities (mainly the integration with other systems for sending alerts, 
-   as well as the support of TLS) have not been fully tested.
+Support Note
+------------
+This project is the result of the work done in the spare time of the contributors, and the software is **PROVIDED AS IS**, in the complete meaning of those words. There is no official support offered by this project, and proposed changes or bugs might or might not be done. It depends on the willingness of the contributors to use their free time on this project, at their own speed (if they want to do that). 
+
+WARNING
+-------
+Please, consider this project as **somewhere in between an alpha and beta version** since some capabilities (mainly the integration with other systems for sending alerts, 
+as well as the support of TLS) have not been fully tested.
