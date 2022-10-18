@@ -3,8 +3,9 @@ Sec Lope De Vega Project
 
 WARNING
 -------
-Please, consider this project as **somewhere in between an alpha and beta version** since some capabilities (mainly the integration with other systems for sending alerts, 
-as well as the support of TLS) have not been fully tested. In terms of technology maturity, please consider this one between TRL-3 and TRL-4 according the [teachnology readiness level](https://en.wikipedia.org/wiki/Technology_readiness_level) since more testing is needed to verify finally the fit for purpose.
+Please, consider this project as **somewhere in between an alpha and beta version** since some capabilities have not been fully tested (mainly the integration with other systems for sending alerts, 
+as well as the support of TLS). In terms of technology maturity, this one is about between TRL-3 and TRL-4 according to the [technology readiness level](https://en.wikipedia.org/wiki/Technology_readiness_level) 
+because more testing is needed to verify the fit for purpose.
 
 Intro
 -----
