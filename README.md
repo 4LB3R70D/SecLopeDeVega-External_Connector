@@ -1,6 +1,11 @@
 Sec Lope De Vega Project
 ========================
 
+WARNING
+-------
+Please, consider this project as **somewhere in between an alpha and beta version** since some capabilities (mainly the integration with other systems for sending alerts, 
+as well as the support of TLS) have not been fully tested. In terms of technology maturity, please consider this one between TRL-3 and TRL-4 according the [teachnology readiness level](https://en.wikipedia.org/wiki/Technology_readiness_level) since more testing is needed to verify finally the fit for purpose.
+
 Intro
 -----
 **Sec Lope de Vega** or just **Lope**, is an open source project licensed under the [Mozilla Public License v2](https://www.mozilla.org/en-US/MPL/2.0/FAQ/). 
@@ -67,7 +72,3 @@ Support Note
 ------------
 This project is the result of the work done in the spare time of the contributors, and the software is **PROVIDED AS IS**, in the complete meaning of those words. There is no official support offered by this project, and proposed changes or bugs might or might not be done. It depends on the willingness of the contributors to use their free time on this project, at their own speed (if they want to do that). 
 
-WARNING
--------
-Please, consider this project as **somewhere in between an alpha and beta version** since some capabilities (mainly the integration with other systems for sending alerts, 
-as well as the support of TLS) have not been fully tested.
