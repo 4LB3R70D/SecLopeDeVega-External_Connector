@@ -178,7 +178,7 @@ def load_conversation_rules(msg_proc):
         # what conversation rules have been used
         m = hashlib.sha512()
         m.update(msg_proc[M_BODY].encode("UTF-8"))
-        hash_conversation_rules_used = m.hexdigest()
+        hash_conversation_rules_used = "sha512:"+m.hexdigest()
         success = True
     else:
         logger.warning(
