@@ -18,6 +18,9 @@ VOLUME "/app/logs"
 # COPY /path/to/your/certs /app/tls
 # COPY /path/to/your/priv_keys /app/tls
 
+# Port for the interaction in server mode
+EXPOSE 8888
+
 # Move the application and the configuration file
 COPY src ./
 COPY ext_conn_config.ini ./
